@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Cloudcade websocket</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.css">
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/vue.min.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="index.js"></script>
+</head>
+
+<body>
+    <div id="important" style="color:#cdbfe3; background-color:#957ac1; padding:30px 0; margin:-20px 0 20px 0;">
+        <div class="container">
+            <h1 style="color:#fff; font-size:60px">Cloudcade websocket</h1>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <!-- 左上角登录窗口 -->
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Please sign in</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form action="#0" id="form-login">
+                                <div class="form-group">
+                                    <label>WS host</label>
+                                    <input type="text" name="name" class="form-control" placeholder="ws host" value="ws://127.0.0.1:3001">
+                                    <label>Name</label>
+                                    <input type="text" name="name" class="form-control" placeholder="Your user name" value="">
+                                    <label>Chatroom</label>
+                                    <input type="text" name="chatroom" class="form-control" placeholder="chatroom name" value="">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Sign In</button>
+                                <button type="submit" class="btn btn-primary">Sign Out</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 左下角用户列表 -->
+                <div class="row">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title"><span class="glyphicon glyphicon-user"></span> Users</h3>
+                        </div>
+                        <div class="panel-body">
+                            <div style="height:210px; overflow-x:hidden; overflow-y:scroll;">
+                                <div id="user-list">
+                                    <div class="media" v-for="user in users">
+                                        <div class="media-left">
+                                            <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + user.image + '.png'">
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading" v-text="user.name + ' (' + user.id + ')'"></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右边聊天界面 -->
+            <div class="col-md-8">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-th-list"></span> Room</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div style="height:400px; overflow-x:hidden; overflow-y:scroll;">
+                            <div id="message-list">
+                                <div style="margin-bottom:25px;" v-for="msg in messages">
+                                    <div v-if="msg.type === 'join' || msg.type === 'left'">
+                                        <div class="media-left">
+                                            <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                        </div>
+                                        <div class="media-body">
+                                            <h4 class="media-heading" v-text="msg.data"></h4>
+                                        </div>
+                                    </div>
+                                    <div v-if="msg.type === 'chat'">
+                                        <div class="media">
+                                            <div class="media-left">
+                                                <img class="media-object" style="width:48px; height:48px;" v-bind:src="'/static/images/' + msg.user.image + '.png'">
+                                            </div>
+                                            <div class="media-body">
+                                                <h4 class="media-heading" v-text="msg.user.name"></h4>
+                                                <span v-text="msg.data"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <form id="form-chat" action="#0">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="A good day, isn't it?">
+                                    <span class="input-group-btn"><button class="btn btn-default" type="submit">Go</button></span>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+
+</html>

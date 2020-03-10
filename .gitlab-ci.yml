@@ -12,7 +12,6 @@ job_build_webpack_master:
     policy: push
   script:
     - npm install --registry=https://registry.npm.taobao.org
-    - npm run build
     - rm -fr node_modules
     - cp .env.example .env
   only:

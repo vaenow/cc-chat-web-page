@@ -1,0 +1,14 @@
+version: '2'
+services:
+  gastter:
+    image: registry.cn-hangzhou.aliyuncs.com/tik/cc-chat-web:stable
+    environment:
+
+    stdin_open: true
+    external_links:
+    - database/mongo:mongo
+    - database/redis:redis
+    volumes:
+    - /tmp:/tmp
+    tty: true
+  

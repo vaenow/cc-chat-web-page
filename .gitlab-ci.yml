@@ -1,0 +1,58 @@
+stages:
+  - buildwebpack
+  - builddocker
+  - deploy
+
+job_build_webpack_release:
+  stage: buildwebpack
+  image: registry.cn-hangzhou.aliyuncs.com/tik/node:tik
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: push
+  script:
+    - ls
+  only:
+    - /^release.*$/
+  artifacts:
+    name: ${CI_COMMIT_REF_SLUG}
+    paths: 
+      - dist
+    expire_in: 10 mins
+  variables:
+    APP_ID: 3003
+
+job_build_docker_release:
+  stage: builddocker
+  image: gitlab/dind
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  only:
+    - /^release.*$/
+  script:
+    - docker build -t cc-chat-web:1.0.1 .
+    - docker login --username=${SEC_USERNAME} registry.cn-hangzhou.aliyuncs.com -p ${SEC_PASSWORD}
+    - docker tag cc-chat-web:1.0.1 registry.cn-hangzhou.aliyuncs.com/tik/cc-chat-web:1.0.1
+    - docker push registry.cn-hangzhou.aliyuncs.com/tik/cc-chat-web:1.0.1
+    - rm -fr node_modules
+  dependencies:
+    - job_build_webpack_release  
+
+job_deploy:
+  stage: deploy
+  image: registry.cn-hangzhou.aliyuncs.com/dev_tool/rancher-cli
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: pull
+  only:
+    - master
+  dependencies:
+    - job_build_webpack_master
+  script:
+    - rm -f ~/.rancher/cli.json
+    - rm -fr node_modules
+    - rancher --url ${RANCHER_HOST}/v2-beta --access-key ${RANCHER_DEPLOY_AK} --secret-key ${RANCHER_DEPLOY_SK} --env Default up -d  --pull --force-upgrade --confirm-upgrade --stack cc-cc-chat-web
+    

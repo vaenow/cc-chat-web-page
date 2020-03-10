@@ -13,7 +13,7 @@
 </head>
 
 <body>
-    <div id="important" style="color:#cdbfe3; background-color:#957ac1; padding:30px 0; margin:-20px 0 20px 0;">
+    <div id="important" style="color:#cdbfe3; background-color:rgb(119 194 242); padding:30px 0; margin:-20px 0 20px 0;">
         <div class="container">
             <h1 style="color:#fff; font-size:60px">Cloudcade websocket</h1>
         </div>
@@ -32,11 +32,11 @@
                             <form action="#0" id="form-login">
                                 <div class="form-group">
                                     <label>WS host</label>
-                                    <input type="text" name="name" class="form-control" placeholder="ws host" value="ws://127.0.0.1:3001">
+                                    <input type="text" name="host" class="form-control" placeholder="ws host" value="ws://127.0.0.1:3001">
                                     <label>Name</label>
-                                    <input type="text" name="name" class="form-control" placeholder="Your user name" value="">
+                                    <input type="text" name="username" class="form-control" placeholder="Your user name" value="3001-1">
                                     <label>Chatroom</label>
-                                    <input type="text" name="chatroom" class="form-control" placeholder="chatroom name" value="">
+                                    <input type="text" name="chatroom" class="form-control" placeholder="chatroom name" value="chatrmid-2">
                                 </div>
                                 <button type="submit" class="btn btn-primary">Sign In</button>
                                 <button type="submit" class="btn btn-primary">Sign Out</button>
@@ -56,10 +56,10 @@
                                 <div id="user-list">
                                     <div class="media" v-for="user in users">
                                         <div class="media-left">
-                                            <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + user.image + '.png'">
+                                            <img class="media-object" style="width:20px; height:20px;" v-bind:src="'/static/images/' + user.uid.match(/\d/)[0] + '.png'">
                                         </div>
                                         <div class="media-body">
-                                            <h4 class="media-heading" v-text="user.name + ' (' + user.id + ')'"></h4>
+                                            <h4 class="media-heading" v-text="user.username + ' (' + user.uid.substr(0,6) + ')'"></h4>
                                         </div>
                                     </div>
                                 </div>

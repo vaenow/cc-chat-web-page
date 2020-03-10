@@ -18,7 +18,6 @@ $(function() {
     LOGIN: "LOGIN",
     LIST: "LIST",
     JOIN: "JOIN",
-    LEFT: "LEFT",
     CHAT: "CHAT"
   };
 
@@ -35,10 +34,7 @@ $(function() {
       } else if (msg.type === MSG_TYPE.LOGIN) {
         addToUserList(vmUserList.users, msg.user);
         addMessage(vmMessageList.messages, msg);
-      } else if (msg.type === "left") {
-        removeFromUserList(vmUserList.users, msg.user);
-        addMessage(vmMessageList.messages, msg);
-      } else if (msg.type === "chat") {
+      } else if (msg.type === MSG_TYPE.CHAT) {
         addMessage(vmMessageList.messages, msg);
       } else if (msg.type === MSG_TYPE.CONNECTED) {
         userLogin();
@@ -66,27 +62,34 @@ $(function() {
         createMsg({
           type: MSG_TYPE.LOGIN,
           username,
-          chatroom,
+          chatroom
         })
       );
     };
+
+    $("#form-chat").submit(function(e) {
+      e.preventDefault();
+      var input = $(this).find("input[type=text]");
+      var text = input.val().trim();
+      console.log("[chat] " + text);
+      if (text) {
+        input.val("");
+        ws.send(
+          createMsg({
+            type: MSG_TYPE.CHAT,
+            username,
+            chatroom,
+            content: text
+          })
+        );
+      }
+    });
   };
 
   // 消息协议
   const createMsg = ({ type, username, reciver, chatroom, content }) => {
     return JSON.stringify({ type, username, reciver, chatroom, content });
   };
-
-  $("#form-chat").submit(function(e) {
-    e.preventDefault();
-    var input = $(this).find("input[type=text]");
-    var text = input.val().trim();
-    console.log("[chat] " + text);
-    if (text) {
-      input.val("");
-      ws.send(text);
-    }
-  });
 
   $("#form-login").submit(e => {
     e.preventDefault();
@@ -104,6 +107,7 @@ $(function() {
       .trim();
 
     if (host && username && chatroom) {
+      $("#form-login button").addClass('disabled')
       bootWebSocket({ host, username, chatroom });
     } else {
       alert("登录消息不全");
@@ -136,6 +140,7 @@ function removeFromUserList(list, user) {
 }
 
 function addMessage(list, msg) {
+
   list.push(msg);
   $("#message-list")
     .parent()
@@ -143,6 +148,6 @@ function addMessage(list, msg) {
       {
         scrollTop: $("#message-list").height()
       },
-      1000
+      200
     );
 }

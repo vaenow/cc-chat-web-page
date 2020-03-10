@@ -3,29 +3,29 @@ stages:
   - builddocker
   - deploy
 
-  job_build_webpack_master:
-    stage: buildwebpack
-    image: registry.cn-hangzhou.aliyuncs.com/tik/node:tik
-    cache:
-      untracked: true
-      key: ${CI_COMMIT_REF_SLUG}
-      policy: push
-    script:
-      - npm install --registry=https://registry.npm.taobao.org
-      - npm run build
-      - rm -fr node_modules
-      - cp .env.example .env
-    only:
-      - master
-    artifacts:
-      name: ${CI_COMMIT_REF_SLUG}
-      paths: 
-        - dist
-        - docker-compose.yml
-        - rancher-compose.yml
-      expire_in: 10 mins
-    variables:
-      APP_ID: 2067
+job_build_webpack_master:
+  stage: buildwebpack
+  image: registry.cn-hangzhou.aliyuncs.com/tik/node:tik
+  cache:
+    untracked: true
+    key: ${CI_COMMIT_REF_SLUG}
+    policy: push
+  script:
+    - npm install --registry=https://registry.npm.taobao.org
+    - npm run build
+    - rm -fr node_modules
+    - cp .env.example .env
+  only:
+    - master
+  artifacts:
+    name: ${CI_COMMIT_REF_SLUG}
+    paths: 
+      - dist
+      - docker-compose.yml
+      - rancher-compose.yml
+    expire_in: 10 mins
+  variables:
+    APP_ID: 2067
 
 job_build_webpack_release:
   stage: buildwebpack

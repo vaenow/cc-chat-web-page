@@ -3,6 +3,7 @@ services:
   gastter:
     image: registry.cn-hangzhou.aliyuncs.com/tik/cc-chat-web:stable
     environment:
+      APP_ID: 200307
 
     stdin_open: true
     external_links:

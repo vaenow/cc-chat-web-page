@@ -18,7 +18,8 @@ $(function() {
     LOGIN: "LOGIN",
     LIST: "LIST",
     JOIN: "JOIN",
-    CHAT: "CHAT"
+    CHAT: "CHAT",
+    TICK: "TICK",
   };
 
   // 启动 ws
@@ -34,6 +35,7 @@ $(function() {
       } else if (msg.type === MSG_TYPE.LOGIN) {
         addToUserList(vmUserList.users, msg.user);
         addMessage(vmMessageList.messages, msg);
+        keepAlive()
       } else if (msg.type === MSG_TYPE.CHAT) {
         addMessage(vmMessageList.messages, msg);
       } else if (msg.type === MSG_TYPE.CONNECTED) {
@@ -66,6 +68,17 @@ $(function() {
         })
       );
     };
+
+    // 保持登录
+    const keepAlive = () => {
+      setInterval(() => ws.send(
+        createMsg({
+          type: MSG_TYPE.TICK,
+          username,
+          chatroom
+        })
+      ), 1e3)
+    }
 
     $("#form-chat").submit(function(e) {
       e.preventDefault();

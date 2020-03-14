@@ -31,7 +31,7 @@ $(function() {
       console.log(data);
       var msg = JSON.parse(data);
       if (msg.type === MSG_TYPE.LIST) {
-        vmUserList.users = msg.data;
+        replaceUserList(vmUserList.users, msg.data)
       } else if (msg.type === MSG_TYPE.LOGIN) {
         addToUserList(vmUserList.users, msg.user);
         addMessage(vmMessageList.messages, msg);
@@ -120,7 +120,9 @@ $(function() {
       .trim();
 
     if (host && username && chatroom) {
-      $("#form-login button").addClass('disabled')
+        $("#form-login button")
+          .addClass("disabled")
+          .attr("disabled", "disabled");
       bootWebSocket({ host, username, chatroom });
     } else {
       alert("登录消息不全");
@@ -128,14 +130,34 @@ $(function() {
   });
 });
 
-function addToUserList(list, user) {
-  var i;
-  for (i = 0; i < list.length; i++) {
-    if (list[i].id === user.id) {
-      return;
+function replaceUserList(list, users) {
+  // 先取交集
+  for (let i = list.length - 1; i >= 0; i--) {
+    const isExist = !!users.filter(u => u.username === list[i].username).length
+    if (!isExist) {
+      list.splice(i, 1)
     }
   }
-  list.push(user);
+  // 再添加新元素
+  for(let i=0;i<users.length; i++) {
+    const isExist = !!list.filter(u => u.username === users[i].username).length
+    if (!isExist) {
+      list.push(users[i])
+    }
+  }
+}
+
+function addToUserList(list, users) {
+  let i, j;
+  for (j = 0; j < users.length; j++) {
+    const user = users[j]
+    for (i = 0; i < list.length; i++) {
+      if (list[i].uid === user.uid) {
+        return;
+      }
+    }
+    list.push(user);
+  }
 }
 
 function removeFromUserList(list, user) {
